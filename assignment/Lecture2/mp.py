@@ -29,9 +29,6 @@ class MP(Generic[S]):
                     return False
         return True
 
-    def print_all_states(self) -> None:
-        print(self.state_list)
-
     def get_stationary_distribution(self) -> Mapping[S, float]:
         sz = len(self.state_list)
         P = np.zeros((sz, sz), dtype=float)
@@ -41,11 +38,10 @@ class MP(Generic[S]):
                 if self.state_transition_matrix.get(s1) is not None:
                     if self.state_transition_matrix[s1].get(s2) is not None:
                         P[i][j] = self.state_transition_matrix[s1][s2]
-        # find a row vector v s.t. v * P = v && sum(v) == 1
+        # find a row vector v s.t. v * P = v && sum(v) == 1 by solving an overdetermined linear equation
+        # ref: https://stephens999.github.io/fiveMinuteStats/stationary_distribution.html
         a = np.concatenate((np.transpose(P) - np.identity(sz), np.ones((1, sz))), axis=0)
-        print(a)
         b = np.concatenate((np.zeros((sz, 1)), np.ones((1, 1))), axis=0)
-        print(b)
         x = linalg.lstsq(a, b)[0]
         return {s: x[i][0].astype(float) for i, s in enumerate(self.state_list)}
 
@@ -58,5 +54,5 @@ if __name__ == '__main__':
         4: {1: 0.3, 2: 0.5, 3: 0.2}
     }
     mp_obj = MP(state_transition_matrix)
-    mp_obj.print_all_states()
+    print(mp_obj.state_list)
     print(mp_obj.get_stationary_distribution())
