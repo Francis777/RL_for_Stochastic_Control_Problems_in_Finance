@@ -6,6 +6,8 @@ from type_vars import S, SSf
 from utils import get_all_states
 import numpy as np
 from scipy import linalg
+# use math.fsum() instead of sum to get rid of rounding error
+import math
 
 
 class MP(Generic[S]):
@@ -21,8 +23,8 @@ class MP(Generic[S]):
         self.state_transition_matrix: SSf = state_transition_matrix
 
     def check_if_valid(self, state_transition_matrix: SSf) -> bool:
-        for s1 in state_transition_matrix.keys():
-            if sum(state_transition_matrix[s1].values()) != 1:
+        for s1 in state_transition_matrix:
+            if math.fsum(state_transition_matrix[s1].values()) != 1.0:
                 return False
             for s2 in state_transition_matrix[s1].keys():
                 if state_transition_matrix.get(s1).get(s2) < 0 or state_transition_matrix.get(s1).get(s2) > 1:
