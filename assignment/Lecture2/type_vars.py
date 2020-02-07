@@ -7,4 +7,5 @@ S = TypeVar('S')  # state
 SSf = Mapping[S, Mapping[S, float]]  # state transition
 SSTff = Mapping[S, Mapping[S, Tuple[float, float]]]  # state transition + r(s,s') reward
 STSff = Mapping[S, Tuple[Mapping[S, float], float]]  # state transition + R(s) reward
-Rf = Callable[[S], float] # reward function
+Rf = Mapping[S, float] # reward function
+Vf = Mapping[S, float] # value function
