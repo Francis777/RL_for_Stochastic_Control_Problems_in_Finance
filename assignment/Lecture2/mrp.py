@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple, Union
+from typing import Tuple, Union
 from type_vars import S, SSf, SSTff, STSff, Rf, Vf
 from mp import MP
 import numpy as np
@@ -68,20 +68,25 @@ class MRP(MP):
         # V = R + gamma * P * V
         # convert R to np array
         R = np.array([reward for reward in self.reward_function.values()])
+        print("R:", R)
+        print("state list: ", self.state_list)
         # convert P to np array
         sz = len(self.state_list)
         P = np.empty([sz, sz])
-        for index1, s1 in enumerate(self.state_list):
-            for index2, s2 in enumerate(self.state_list):
-                P[index1, index2] = self.state_transition_matrix.get(s1).get(s2, 0.0)
+        for index1 in range(sz):
+            for index2 in range(sz):
+                P[index1, index2] = self.state_transition_matrix.get(self.state_list[index1]).get(self.state_list[
+                                                                                                      index2], 0.0)
         # calculate value using matrix inversion
         # https://stackoverflow.com/questions/9155478/how-to-try-except-an-illegal-matrix-operation-due-to-singularity-in-numpy
+        print("P: ", P)
+        print("A: ", np.eye(sz) - self.gamma * P)
         try:
-            V = np.linalg.solve(1 - self.gamma * P, R)
+            V = np.linalg.solve(np.eye(sz) - self.gamma * P, R)
         except np.linalg.LinAlgError as err:
             if 'Singular matrix' in str(err):
                 print("matrix not invertible, will use least square")
-                V = np.linalg.lstsq(1 - self.gamma * P, R)[0]
+                V = np.linalg.lstsq(1 - self.gamma * P, R, rcond=None)[0]
             else:
                 raise
         # convert V from np array to dict
@@ -143,3 +148,21 @@ if __name__ == '__main__':
     print(mrp_obj.value_function)
 
     # TODO: the solved value function is incorrect (vs the analytical one), figure out why
+
+    # the following example is from David Silver's slide
+    student_mrp = {
+        'Facebook': ({'Facebook': 0.9, 'Class 1': 0.1}, -1),
+        'Class 1': ({'Facebook': 0.5, 'Class 2': 0.5}, -2),
+        'Class 2': ({'Sleep': 0.2, 'Class 3': 0.8}, -2),
+        'Class 3': ({'Pass': 0.6, 'Pub': 0.4}, -2),
+        'Pass': ({'Sleep': 1.0}, 10),
+        'Pub': ({'Class 1': 0.2, 'Class 2': 0.4, 'Class 3': 0.4}, 1),
+        'Sleep': ({'Sleep': 1.0}, 0)
+    }
+
+    print('\n')
+    mrp_obj = MRP(student_mrp, 1.0)
+    print(mrp_obj.state_transition_matrix)
+    print(mrp_obj.reward_matrix)
+    print(mrp_obj.reward_function)
+    print(mrp_obj.value_function)

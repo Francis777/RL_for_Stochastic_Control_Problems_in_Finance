@@ -1,5 +1,4 @@
-# TODO:
-#   1. what is stantionary distribution used for?
+# TODO: Check correctness of stantionary distribution
 
 from typing import Generic, Mapping, Sequence
 from type_vars import S, SSf
