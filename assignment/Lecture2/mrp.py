@@ -85,7 +85,7 @@ class MRP(MP):
             V = np.linalg.solve(np.eye(sz) - self.gamma * P, R)
         except np.linalg.LinAlgError as err:
             if 'Singular matrix' in str(err):
-                print("matrix not invertible, will use least square")
+                print("matrix not invertible, will use least square, but most likely result may be incorrect")
                 V = np.linalg.lstsq(1 - self.gamma * P, R, rcond=None)[0]
             else:
                 raise
