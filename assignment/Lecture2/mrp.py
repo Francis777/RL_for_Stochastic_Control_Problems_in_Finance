@@ -1,7 +1,8 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, Sequence
 from type_vars import S, SSf, SSTff, STSff, Rf, Vf
 from mp import MP
 import numpy as np
+import random
 
 
 # Note that although the definition of reward function is R(s) = E[R_t+1 | S_t = s]
@@ -17,11 +18,12 @@ import numpy as np
 
 class MRP(MP):
     def __init__(self, mrp_input: Union[SSTff, STSff], discount_factor: float) -> None:
+        # TODO: inherit check_if_valid from MP
         self.type_indicator: bool = MRP.input_type(mrp_input)
         self.gamma: float = discount_factor
+        self.terminal_states, self.non_terminal_states = self._categorize_states(mrp_input)
         self.state_transition_matrix, self.reward_matrix = self._assign_transition_matrix(
             mrp_input)
-        super().__init__(self.state_transition_matrix)
         self.reward_function: Rf = self._assign_reward_function()
         self.value_function: Vf = self._assign_value_function()
 
@@ -31,11 +33,33 @@ class MRP(MP):
         first_value = mrp_input.get(next(iter(mrp_input)))
         return type(first_value) is dict
 
+    def _categorize_states(self, mrp_input: Union[SSTff, STSff]) -> Tuple[Sequence[S], Sequence[S]]:
+        # list of all states
+        all_states = [state for state in mrp_input.keys()]
+        # list of terminal states
+        terminal_states = []
+        non_terminal_states = []
+        for s in all_states:
+            if self.type_indicator is True:
+                if mrp_input.get(s).get(s) is not None and mrp_input.get(s).get(s)[0] == 1:
+                    terminal_states.append(s)
+                else:
+                    non_terminal_states.append(s)
+            else:
+                if mrp_input.get(s)[0].get(s, 0) == 1:
+                    terminal_states.append(s)
+                else:
+                    non_terminal_states.append(s)
+        return terminal_states, non_terminal_states
+
     def _assign_transition_matrix(self, mrp_input: Union[SSTff, STSff]) -> Tuple[SSf, SSf]:
+        # Note that both state_transition_matrix and reward_matrix should only include non-terminal states
+        # otherwise assume s is terminal state, P_ss = 1, which means (I - gamma * P) will have a 0 eigenvalue
+        # when gamma = 1, which makes the inversion method inapplicable
         state_transition_matrix = {}
         reward_matrix = {}
         if self.type_indicator is True:
-            for s1 in mrp_input:
+            for s1 in self.non_terminal_states:
                 state_value = {}
                 reward_value = {}
                 for s2 in mrp_input.get(s1):
@@ -44,7 +68,7 @@ class MRP(MP):
                 state_transition_matrix.update({s1: state_value})
                 reward_matrix.update({s1: reward_value})
         else:
-            for s1 in mrp_input:
+            for s1 in self.non_terminal_states:
                 state_transition_matrix.update({s1: mrp_input.get(s1)[0]})
                 reward_value = {}
                 for s2 in mrp_input:
@@ -69,14 +93,15 @@ class MRP(MP):
         # convert R to np array
         R = np.array([reward for reward in self.reward_function.values()])
         print("R:", R)
-        print("state list: ", self.state_list)
+        print("state list: ", self.non_terminal_states)
         # convert P to np array
-        sz = len(self.state_list)
+        sz = len(self.non_terminal_states)
         P = np.empty([sz, sz])
         for index1 in range(sz):
             for index2 in range(sz):
-                P[index1, index2] = self.state_transition_matrix.get(self.state_list[index1]).get(self.state_list[
-                                                                                                      index2], 0.0)
+                P[index1, index2] = self.state_transition_matrix.get(self.non_terminal_states[index1]).get(
+                    self.non_terminal_states[
+                        index2], 0.0)
         # calculate value using matrix inversion
         # https://stackoverflow.com/questions/9155478/how-to-try-except-an-illegal-matrix-operation-due-to-singularity-in-numpy
         print("P: ", P)
@@ -90,7 +115,7 @@ class MRP(MP):
             else:
                 raise
         # convert V from np array to dict
-        vf = {state: float(value) for state, value in zip(self.state_list, np.nditer(V))}
+        vf = {state: float(value) for state, value in zip(self.non_terminal_states, np.nditer(V))}
         return vf
 
     # R(s)
@@ -104,6 +129,24 @@ class MRP(MP):
     # v(s)
     def get_value(self, state: S) -> float:
         return self.value_function.get(state)
+
+    def get_random_sample(self, initial_state: S = None) -> Tuple[Sequence[S], float]:
+        g = 0
+        sample = []
+        ts = 0
+        state = initial_state if initial_state is not None else random.choice(self.non_terminal_states +
+                                                                         self.terminal_states)
+        while state in self.non_terminal_states:
+            sample.append(state)
+            g += self.gamma ** ts * self.get_expected_reward(state)
+            ts += 1
+            next_state_lst = [s for s in self.state_transition_matrix.get(state).keys()]
+            print(next_state_lst)
+            pr_list = [pr for pr in self.state_transition_matrix.get(state).values()]
+            print(pr_list)
+            state = np.random.choice(next_state_lst, p=pr_list)
+        sample.append(state)
+        return sample, g
 
 
 if __name__ == '__main__':
@@ -140,14 +183,12 @@ if __name__ == '__main__':
         'E': {'D': (0.5, 0), 'T2': (0.5, 1)},
         'T2': {'T2': (1.0, 0)}
     }
-    print('\n')
+    print('\nrandom walk: ')
     mrp_obj = MRP(random_walk_mrp, 1.0)
     print(mrp_obj.state_transition_matrix)
     print(mrp_obj.reward_matrix)
     print(mrp_obj.reward_function)
     print(mrp_obj.value_function)
-
-    # TODO: the solved value function is incorrect (vs the analytical one), figure out why
 
     # the following example is from David Silver's slide
     student_mrp = {
@@ -160,9 +201,13 @@ if __name__ == '__main__':
         'Sleep': ({'Sleep': 1.0}, 0)
     }
 
-    print('\n')
+    print('\nstudent mrp: ')
     mrp_obj = MRP(student_mrp, 1.0)
     print(mrp_obj.state_transition_matrix)
     print(mrp_obj.reward_matrix)
     print(mrp_obj.reward_function)
     print(mrp_obj.value_function)
+    sample_1, sample_return_1 = mrp_obj.get_random_sample('Class 1')
+    print(sample_1, sample_return_1)
+    sample_2, sample_return_2 = mrp_obj.get_random_sample()
+    print(sample_2, sample_return_2)

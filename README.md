@@ -1,7 +1,6 @@
 # CME241 Assignment Repo
 
-Repo for managing my assignment solution as well as self-learning materials for [CME 241](http://web.stanford.edu/class
-/cme241/), taught by Prof. Ashwin Rao at Stanford University.
+Repo for managing my assignment solution as well as self-learning materials for [CME 241](http://web.stanford.edu/class/cme241/), taught by Prof. Ashwin Rao at Stanford University.
 
 ## Assignment
 
@@ -27,4 +26,4 @@ Here I listed some RL-related talks and recent papers I found interesting (*TBD*
 - [Optimization Perspectives on Learning to Control](https://people.eecs.berkeley.edu/~brecht/l2c-icml2018/)
     
     This is a tutorial given by Prof. Ben Recht at ICML 2018 in which he discussed the intersection of optimal
-     control adn RL.
+     control and RL.
