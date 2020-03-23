@@ -1,29 +1,34 @@
-# CME241 Assignment Repo
+# CME241
 
-Repo for managing my assignment solution as well as self-learning materials for [CME 241](http://web.stanford.edu/class/cme241/), taught by Prof. Ashwin Rao at Stanford University.
+This repository is used for managing my assignment solution as well as study materials for [CME 241: Reinforcement Learning for Stochastic Control Problems in Finance](http://web.stanford.edu/class/cme241/), taught by Prof. Ashwin Rao at Stanford University, winter 2020.
 
-## Assignment
+---
 
-My solution for assignments are listed and linked [here](./assignment/README.md)
+## Assignment List
 
+My solution for assignments are listed and linked as follows:
 
-## Useful Resources:
+| Lecture |                           Topic                            |                 Written Assignment                 | Programming Assignment                                                                                                                                                                                    |
+| ------- | :--------------------------------------------------------: | :------------------------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       |                          Overview                          |                                                    |
+| 2       |                      MP, MRP and MDP                       |          [Link](./assignment/writeup/lecture_2.pdf)           | [MP](./assignment/src/process/mp.py) / [MRP](./assignment/src/process/mrp.py) / [MDP](./assignment/src/process/mdp.py) / [Policy](./assignment/src/process/policy.py)                                                                                 |
+| 3       |                    Dynamic Programming                     |          [Link](./assignment/writeup/lecture_12.pdf)          | [Policy Evaluation](./assignment/src/algorithm/policy_eval.py) / [Policy Iteration](./assignment/src/algorithm/pi.py) / [Value Iteration](./assignment/src/algorithm/vi.py)                                                                |
+| 4       |               Risk-Aversion, Utility Theory                |          [Link](./assignment/writeup/lecture_4.pdf)           |                                                                                                                                                                                                           |
+| 5-9     |           Application Problems of RL in Finance            | [Merton's Portfolio problem](./assignment/writeup/merton.pdf) | [Optimal Asset Allocation](./assignment/src/example/merton.py)                                                                                                                                                       |
+| 10-11   |                   Model-free Prediction                    |                                                    | [Interface](./assignment/src/tabular_rl_interface.py) / [Monte-Carlo](./assignment/src/algorithm/mc.py) / [TD(0)](./assignment/src/algorithm/td.py) / [TD(lambda)](./assignment/src/algorithm/td_lambda.py) / [Comparison](./assignment/src/example/mc_vs_td.py) |
+| 12      |                     Model-free Control                     |          [Link](./assignment/writeup/lecture_12.pdf)          | [MC Control](./assignment/src/algorithm/mc.py) / [SARSA](./assignment/src/algorithm/sarsa.py) / [Q-Learning](./assignment/src/algorithm/q_learning.py)                                                                                     |
+| 13-14   |                   Function Approximation                   |                                                    | TBD                                                                                                                                                                                                       |
+| 15      |            Value Function Geometry, Gradient TD            |                                                    |
+| 16      |                       Guest Lecture                        |                                                    |
+| 17      |                      Policy Gradient                       |          [Link](./assignment/writeup/lecture_17.pdf)          | [REINFORCE](./assignment/src/algorithm/reinforce.py)                                                                                                                                                                 |
+| 18      | Evolutionary Strategies, Integrating Learning and Planning |                                                    |
+| 19      |                Exploration vs Exploitation                 |               [Link](./assignment/src/img/mab)                | [Multi-armed Bandits](./assignment/src/example/mab.py)                                                                                                                                                               |
+| 20      |                       Special Topics                       |                                                    |
 
-### Github repo:
-- [Prof. Rao's sample codebase for CME 241](https://github.com/coverdrive/MDP-DP-RL) **(Must-Read!)**
-- [OpenAI Baselines](https://github.com/openai/baselines)
-- [Stable Baselines (OpenAI Baselines ++)](https://github.com/hill-a/stable-baselines)
-- [Deep RL Spinning Up](https://github.com/openai/spinningup) *(provided by OpenAI)*
+To install all dependencies, run:
 
+`pip install -r ./assignment/requirements.txt`
 
-### Courses and bootcamp:
-- [CS285 Deep RL @Berkeley, Prof. Sergey Levine](http://rail.eecs.berkeley.edu/deeprlcourse/) 
-- [Deep RL for Robotics @CMU, Prof. David Held](https://sites.google.com/view/16-881-cmu/home?authuser=0)
-- [Deep RL Bootcamp @Berkeley, Aug 2017](https://youtu.be/bsuvM1jO-4w)
-- [List of RL summer schools worldwide](https://github.com/sshkhr/awesome-mlss)
-### Misc:
-Here I listed some RL-related talks and recent papers I found interesting (*TBD*): 
-- [Optimization Perspectives on Learning to Control](https://people.eecs.berkeley.edu/~brecht/l2c-icml2018/)
-    
-    This is a tutorial given by Prof. Ben Recht at ICML 2018 in which he discussed the intersection of optimal
-     control and RL.
+## Resources
+
+A list of resources (including github repo, lectures, papers, talks etc.) which I personally find useful are listed and linked [here](./assignment/resources/README.md)

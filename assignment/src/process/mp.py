@@ -1,12 +1,16 @@
 # TODO: Check correctness of stationary distribution
 
 from typing import Generic, Mapping, Sequence
-from type_vars import S, SSf
-from utils import get_all_states
 import numpy as np
 from scipy import linalg
 # use math.fsum() instead of sum to get rid of rounding error
 import math
+
+from src.type_vars import S, SSf
+from src.utils import get_all_states
+
+# Note: if using relative path import like "from ..type_vars import S, SSf", then mp.py should be invoked using -m
+# option (https://napuzba.com/a/import-error-relative-no-parent/p4)
 
 
 class MP(Generic[S]):

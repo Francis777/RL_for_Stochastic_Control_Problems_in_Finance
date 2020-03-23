@@ -1,20 +1,21 @@
-# TODO:
-#   (1) how to implement MDP "incrementally" based on MRP?
-#   (2) how to "plug-in" policy?
+# TODO: how to implement MDP "incrementally" based on MRP?
 
 from typing import Generic, Union, Sequence, Tuple
-from type_vars import S, A, SASf, SASTff, SATSff, Vf, Rf, Qf
-from policy import Policy
-from mrp import MRP
+from src.type_vars import S, A, SSf, SASf, SASTff, SATSff, Vf, Rf, Qf
+from src.process.policy import Policy
+from src.process.mrp import MRP
 
 
 class MDP(Generic[S, A]):
     def __init__(self, mdp_input: Union[SASTff, SATSff], discount_factor: float) -> None:
         self.type_indicator: bool = MDP.input_type(mdp_input)
         self.gamma: float = discount_factor
-        self.all_states, self.all_actions = self._get_all_states_and_actions(mdp_input)
-        self.terminal_states, self.non_terminal_states = self._categorize_states(mdp_input)
-        self.transition_matrix: Tuple[SASf, SASf] = self._assign_transition_matrix(mdp_input)
+        self.all_states, self.all_actions = self._get_all_states_and_actions(
+            mdp_input)
+        self.terminal_states, self.non_terminal_states = self._categorize_states(
+            mdp_input)
+        self.transition_matrix: Tuple[SASf, SASf] = self._assign_transition_matrix(
+            mdp_input)
 
     # return True if SASTff, False if SATSff
     # TODO: unify with the same method in MRP
@@ -71,40 +72,53 @@ class MDP(Generic[S, A]):
                     state_value = {}
                     reward_value = {}
                     for s2 in mdp_input.get(sa_tuple):
-                        state_value.update({s2: mdp_input.get(sa_tuple).get(s2)[0]})
-                        reward_value.update({s2: mdp_input.get(sa_tuple).get(s2)[1]})
+                        state_value.update(
+                            {s2: mdp_input.get(sa_tuple).get(s2)[0]})
+                        reward_value.update(
+                            {s2: mdp_input.get(sa_tuple).get(s2)[1]})
                 state_transition_matrix.update({sa_tuple: state_value})
                 reward_matrix.update({sa_tuple: reward_value})
         else:
             for sa_tuple in mdp_input:
                 if sa_tuple[0] not in self.terminal_states:
-                    state_transition_matrix.update({sa_tuple: mdp_input.get(sa_tuple)[0]})
+                    state_transition_matrix.update(
+                        {sa_tuple: mdp_input.get(sa_tuple)[0]})
                     reward_value = {}
                     for s2 in mdp_input.get(sa_tuple)[0]:
                         reward_value.update({s2: mdp_input.get(sa_tuple)[1]})
                     reward_matrix.update({sa_tuple: reward_value})
         return state_transition_matrix, reward_matrix
 
+    # convert MDP to MRP given policy
+    # SASTff -> SSTff, SATSff -> STSff
     def get_mrp(self, policy: Policy) -> MRP:
-        pass
+        state_transition_matrix: SASf = self.transition_matrix[0]
+        reward_matrix: SASf = self.transition_matrix[1]
+        # convert transition matrix (SASf -> SSf)
+        mrp_state_transition_matrix: SSf = {}
+        mrp_reward_matrix: SSf = {}
 
-    def _assign_value_function(self) -> Vf:
-        pass
+        for s in self.all_states:
+            for s1 in self.all_states:
+                p_s_s1 = sum([state_transition_matrix[(
+                    s, a, s1)] * policy.get_state_action_probability(s, a) for a in self.all_actions])
+                mrp_state_transition_matrix.update({(s, s1): p_s_s1})
+                r_s_s1 = sum([reward_matrix[(
+                    s, a, s1)] * policy.get_state_action_probability(s, a) for a in self.all_actions])
+                mrp_reward_matrix.update({(s, s1): r_s_s1})
+        # TODO: return MRP class instance rather than two matrices
+        return mrp_state_transition_matrix, mrp_reward_matrix
 
-    def _assign_action_value_function(self) -> Qf:
-        pass
+    def query_Pr(self, s: S, a: A, s1: S) -> float:
+        return self.transition_matrix[0].get((s, a)).get(s1)
 
-    def _assign_reward_function(self) -> Rf:
-        pass
+    def query_R(self, s: S, a: Union[A, None]) -> float:
+        if a is None:
+            a = self.all_actions[0]
+        return self.transition_matrix[1].get((s, a))
 
-    def get_reward(self, state: S, action: A) -> float:
-        pass
-
-    def get_v_value(self, state: S) -> float:
-        pass
-
-    def get_q_value(self, state: S, action: A) -> float:
-        pass
+    def query_successor(self, s: S, a: A) -> Sequence[S]:
+        return [s1 for s1 in self.all_states if s1 in self.transition_matrix[0].get((s, a)).keys()]
 
 
 if __name__ == '__main__':

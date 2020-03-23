@@ -1,6 +1,6 @@
 from typing import Tuple, Union, Sequence
-from type_vars import S, SSf, SSTff, STSff, Rf, Vf
-from mp import MP
+from src.type_vars import S, SSf, SSTff, STSff, Rf, Vf
+from src.process.mp import MP
 import numpy as np
 import random
 
@@ -111,7 +111,7 @@ class MRP(MP):
         except np.linalg.LinAlgError as err:
             if 'Singular matrix' in str(err):
                 print("matrix not invertible, will use least square, but most likely result may be incorrect")
-                V = np.linalg.lstsq(1 - self.gamma * P, R, rcond=None)[0]
+                V = np.linalg.lstsq(np.eye(sz) - self.gamma * P, R, rcond=None)[0]
             else:
                 raise
         # convert V from np array to dict

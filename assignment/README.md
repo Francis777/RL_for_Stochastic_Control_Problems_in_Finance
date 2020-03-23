@@ -1,25 +1,19 @@
 # Assignment list
 
-## Lecture 2 (Jan 10)
+| Lecture |                           Topic                            |                 Written Assignment                 | Programming Assignment                                                                                                                                                                                    |
+| ------- | :--------------------------------------------------------: | :------------------------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1       |                          Overview                          |                                                    |
+| 2       |                      MP, MRP and MDP                       |          [Link](./writeup/lecture_2.pdf)           | [MP](./src/process/mp.py) / [MRP](./src/process/mrp.py) / [MDP](./src/process/mdp.py) / [Policy](./src/process/policy.py)                                                                                 |
+| 3       |                    Dynamic Programming                     |          [Link](./writeup/lecture_12.pdf)          | [Policy Evaluation](./src/algorithm/policy_eval.py) / [Policy Iteration](./src/algorithm/pi.py) / [Value Iteration](./src/algorithm/vi.py)                                                                |
+| 4       |               Risk-Aversion, Utility Theory                |          [Link](./writeup/lecture_4.pdf)           |                                                                                                                                                                                                           |
+| 5-9     |           Application Problems of RL in Finance            | [Merton's Portfolio problem](./writeup/merton.pdf) | [Optimal Asset Allocation](./src/example/merton.py)                                                                                                                                                       |
+| 10-11   |                   Model-free Prediction                    |                                                    | [Interface](./src/tabular_rl_interface.py) / [Monte-Carlo](./src/algorithm/mc.py) / [TD(0)](./src/algorithm/td.py) / [TD(lambda)](./src/algorithm/td_lambda.py) / [Comparison](./src/example/mc_vs_td.py) |
+| 12      |                     Model-free Control                     |          [Link](./writeup/lecture_12.pdf)          | [MC Control](./src/algorithm/mc.py) / [SARSA](./src/algorithm/sarsa.py) / [Q-Learning](./src/algorithm/q_learning.py)                                                                                     |
+| 13-14   |                   Function Approximation                   |                                                    | TBD                                                                                                                                                                                                       |
+| 15      |            Value Function Geometry, Gradient TD            |                                                    |
+| 16      |                       Guest Lecture                        |                                                    |
+| 17      |                      Policy Gradient                       |          [Link](./writeup/lecture_17.pdf)          | [REINFORCE](./src/algorithm/reinforce.py)                                                                                                                                                                 |
+| 18      | Evolutionary Strategies, Integrating Learning and Planning |                                                    |
+| 19      |                Exploration vs Exploitation                 |               [Link](./src/img/mab)                | [Multi-armed Bandits](./src/example/mab.py)                                                                                                                                                               |
+| 20      |                       Special Topics                       |                                                    |
 
-- [Written part](./Lecture2/written.pdf)
-- Programming part
-    - [MP](./Lecture2/mp.py)
-    - [MRP](./Lecture2/mrp.py)
-    - [MDP](./Lecture2/mdp.py)
-    - [Policy](./Lecture2/policy.py) 
-    
-## Lecture 3 (Jan 15)
-- Programming part
-    - Policy Evaluation
-        - Tabular
-        - Function approximation (TBD)
-    - Policy Iteration
-        - Tabular
-        - Function approximation (TBD)
-    - Value Iteration
-        - Tabular
-        - Function approximation (TBD)
-
-## Lecture 4 (Jan 17)
-- [Written part](./Lecture4/written.pdf)
